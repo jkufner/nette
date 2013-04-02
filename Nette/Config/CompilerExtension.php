@@ -44,17 +44,17 @@ abstract class CompilerExtension extends Nette\Object
 
 	/**
 	 * Returns extension configuration.
-	 * @param  array default values.
-	 * @param  bool  perform %parameters% expansion?
+	 * @param  array default unexpanded values.
 	 * @return array
 	 */
-	public function getConfig(array $defaults = NULL, $expand = TRUE)
+	public function getConfig(array $defaults = NULL)
 	{
 		$config = $this->compiler->getConfig();
-		$config = isset($config[$this->name]) ? $config[$this->name] : array();
-		unset($config['services'], $config['factories']);
-		$config = Helpers::merge($config, $defaults);
-		return $expand ? $this->compiler->getContainerBuilder()->expand($config) : $config;
+		unset($config[$this->name]['services'], $config[$this->name]['factories']);
+		return Helpers::merge(
+			isset($config[$this->name]) ? $config[$this->name] : array(),
+			$this->compiler->getContainerBuilder()->expand($defaults)
+		);
 	}
 
 
